@@ -27,6 +27,12 @@ $ cd cride
 
 `docker-compose run --rm --service-ports django` <> subir el servicio en monitoreo otra teminal independiente
 
+### generar migraciones 
+`docker-compose run --rm django python manage.py makemigrations`
+
+### Crear las migracion
+`docker-compose run --rm django python manage.py migrate`
+
 "import ipdb; ipdb.set_trace()"  <> Ver en la terminal log y gestion
 
 # Comandos Docker basicos
