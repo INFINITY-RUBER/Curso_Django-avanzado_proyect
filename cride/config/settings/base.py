@@ -43,7 +43,7 @@ DJANGO_APPS = [
     'django.contrib.admin',
 ]
 
-THIRD_PARTY_APPS = []
+THIRD_PARTY_APPS = ['rest_framework']
 
 LOCAL_APPS = [
     'cride.users.apps.UsersAppConfig', 'cride.circles.apps.CirclesAppConfig'
@@ -159,3 +159,11 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERYD_TASK_TIME_LIMIT = 5 * 60
 CELERYD_TASK_SOFT_TIME_LIMIT = 60
+
+# Django REST FRAMEWORK
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ]
+}

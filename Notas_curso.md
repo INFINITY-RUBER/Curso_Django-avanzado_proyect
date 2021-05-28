@@ -47,3 +47,18 @@ $ cd cride
 [-a]
 [-q]
 [--help]
+
+## librerias pip
+
+`pip install httpie`
+
+`http localhost:8000/circles/`  <> genera el query
+`http localhost:8000/circles/ -b` <> genera el body
+`http localhost:8000/circles/ -v` <> respueta verbosa
+
+
+## Debugging python 
+`pip install ipdb` 
+
+`import ipdb; ipdb.set_trace()`
+# 
