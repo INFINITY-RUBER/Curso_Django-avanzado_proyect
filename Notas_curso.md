@@ -61,4 +61,19 @@ $ cd cride
 `pip install ipdb` 
 
 `import ipdb; ipdb.set_trace()`
-# 
+## comando http terminal
+registrar usuario:
+`http POST localhost:8000/users/signup/ email="prueba@gmail.com" first_name=prueba last_name=hernandez password=admin123 password_confirmation=admin123 phone_number=+3102331028 username=infinity`
+
+`http localhost:8000/circles/ -b`
+`http localhost:8000/users/login/`
+`http localhost:8000/users/login/ email=prueba@gmail.com password=admin123 -b`
+
+`http localhost:8000/users/verify/ token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoiaW5maW5pdHkiLCJleHAiOjE2MjI1NzMyMDMsInR5cGUiOiJlbWFpbF9jb25maXJtYXRpb24ifQ.PkeolGKjc0jsaZxwdTdxdYseB-qgJst2YPZ2UJ0l0mc"`
+
+en Shell full:
+`User.objects.all()` ver usuarios
+<User: infinity>, <User: ruber>]>
+
+`User.objects.all().delete()` Borrar los usuarios
+

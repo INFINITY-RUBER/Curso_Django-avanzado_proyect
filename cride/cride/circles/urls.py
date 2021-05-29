@@ -1,12 +1,17 @@
 """ Circles URLs."""
 
 # Django
-from django.urls import path
+from django.urls import include, path
+
+# Django REST Framework
+from rest_framework.routers import DefaultRouter
 
 # Views
-from cride.circles.views import list_circles, create_circle
+from .views import circles as circle_views
 
-urlpatterns = [
-    path('circles/', list_circles),
-    path('circles/create', create_circle)
-]
+router = DefaultRouter()
+router.register(
+    r'circles', circle_views.CircleviewsSet,
+    basename='circle')  # me genera el Usa asi: www.**/circles/{id}/
+
+urlpatterns = [path('', include(router.urls))]
