@@ -43,7 +43,10 @@ DJANGO_APPS = [
     'django.contrib.admin',
 ]
 
-THIRD_PARTY_APPS = ['rest_framework']
+THIRD_PARTY_APPS = [
+    'rest_framework',
+    'rest_framework.authtoken',
+]
 
 LOCAL_APPS = [
     'cride.users.apps.UsersAppConfig', 'cride.circles.apps.CirclesAppConfig'
