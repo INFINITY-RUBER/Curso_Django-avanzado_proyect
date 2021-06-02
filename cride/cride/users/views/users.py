@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import (AllowAny, IsAuthenticated)
 from cride.users.permissions import IsAccountOwner
 # serializers
+from cride.users.serializers.profiles import ProfileModelSerializer
 from cride.circles.serializers import CircleModelSerializer
 from cride.users.serializers import (UserLoginSerializer, UserModelSerializer,
                                      UserSignUpSerializer,
