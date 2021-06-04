@@ -6,11 +6,37 @@ from rest_framework import serializers
 # Models
 from cride.circles.models import Membership
 from cride.rides.models import Ride
-# from cride.users.models import User
+from cride.users.models import User
+
+# Serializers
+from cride.users.serializers import UserModelSerializer
 
 # Utilities
 from datetime import timedelta
 from django.utils import timezone
+
+
+class RideModelSerializer(serializers.ModelSerializer):
+    """Ride model serializer."""
+
+    offered_by = UserModelSerializer(read_only=True)
+    offered_in = serializers.StringRelatedField()
+    passengers = UserModelSerializer(read_only=True, many=True)
+
+    class Meta:
+        """Meta class."""
+        model = Ride
+        fields = '__all__'  # muestra todos los campos
+        read_only_fields = (  # solo lectura
+            'offered_by', 'offered_in', 'rating')
+
+    def update(self, instance, data):
+        """Allow updates only before departure date."""
+        now = timezone.now()
+        if instance.departure_date <= now:
+            raise serializers.ValidationError(
+                'Ongoing rides cannot be modified.')
+        return super(RideModelSerializer, self).update(instance, data)
 
 
 class CreateRideSerializer(serializers.ModelSerializer):
@@ -18,6 +44,7 @@ class CreateRideSerializer(serializers.ModelSerializer):
 
     offered_by = serializers.HiddenField(
         default=serializers.CurrentUserDefault())
+
     available_seats = serializers.IntegerField(min_value=1, max_value=15)
 
     class Meta:
@@ -75,10 +102,99 @@ class CreateRideSerializer(serializers.ModelSerializer):
         membership = self.context['membership']
         membership.rides_offered += 1
         membership.save()
-
         # Profile
         profile = data['offered_by'].profile
         profile.rides_offered += 1
         profile.save()
+        return ride
+
+
+class JoinRideSerializer(serializers.ModelSerializer):
+    """Join ride serializer."""
+
+    passenger = serializers.IntegerField()
+
+    class Meta:
+        """Meta class."""
+
+        model = Ride
+        fields = ('passenger', )
+
+    def validate_passenger(self, data):
+        """Verify passenger exists and is a circle member."""
+        try:
+            user = User.objects.get(pk=data)
+        except User.DoesNotExist:
+            raise serializers.ValidationError('Invalid passenger.')
+
+        circle = self.context['circle']
+        try:
+            membership = Membership.objects.get(user=user,
+                                                circle=circle,
+                                                is_active=True)
+        except Membership.DoesNotExist:
+            raise serializers.ValidationError(
+                'User is not an active member of the circle.')
+
+        self.context['user'] = user
+        self.context['member'] = membership
+        return data
+
+    def validate(self, data):
+        """Verify rides allow new passengers."""
+        ride = self.context['ride']
+        if ride.departure_date <= timezone.now():
+            raise serializers.ValidationError("You can't join this ride now")
+
+        if ride.available_seats < 1:
+            raise serializers.ValidationError("Ride is already full!")
+
+        if ride.passengers.filter(pk=self.context['user'].pk).exists(
+        ):  # ride no cuente con ese pasajero
+            raise serializers.ValidationError(
+                'Passenger is already in this trip')
+
+        return data
+
+    def update(self, instance, data):
+        """Add passenger to ride, and update stats."""
+        ride = self.context['ride']
+        user = self.context['user']
+
+        ride.passengers.add(user)
+
+        # Profile
+        profile = user.profile
+        profile.rides_taken += 1
+        profile.save()
+
+        # Membership
+        member = self.context['member']
+        member.rides_taken += 1
+        member.save()
+
+        # Circle
+        circle = self.context['circle']
+        circle.rides_taken += 1
+        circle.save()
 
         return ride
+
+
+class EndRideSerializer(serializers.ModelSerializer):
+    """End ride serializer."""
+
+    current_time = serializers.DateTimeField()
+
+    class Meta:
+        """Meta class."""
+
+        model = Ride  # modelo
+        fields = ('is_active', 'current_time')  # campos que se afectan
+
+    def validate_current_time(self, data):
+        """Verify ride have indeed started."""
+        ride = self.context['view'].get_object()
+        if data <= ride.departure_date:
+            raise serializers.ValidationError('Ride has not started yet')
+        return data

@@ -71,9 +71,51 @@ registrar usuario:
 
 `http localhost:8000/users/verify/ token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoiaW5maW5pdHkiLCJleHAiOjE2MjI1NzMyMDMsInR5cGUiOiJlbWFpbF9jb25maXJtYXRpb24ifQ.PkeolGKjc0jsaZxwdTdxdYseB-qgJst2YPZ2UJ0l0mc"`
 
-en Shell full:
+## en Shell_plus:
 `User.objects.all()` ver usuarios
+`User.objects.get(username='infinity')`  un usuario
+
 <User: infinity>, <User: ruber>]>
 
 `User.objects.all().delete()` Borrar los usuarios
+`Membership.objects.first().is_admin` 
+`Membership.objects.all().values('user','circle','is_admin')` ver miembros admin
+Out[9]: <QuerySet [{'user': 7, 'circle': 25, 'is_admin': True}]>
+`Token.objects.get(user__username='infinity')` <> Token de usuario
+`u = User.objects.first()` <> cargar primer usuario
+`c = Circle.objects.first()`
+`Invitation.objects.create(issued_by=u, circle=c)` <> crea invitacion
+
+Crear Membership
+``` 
+user = User.objects.get(username='ruberh')
+circle = Circle.objects.get(slug_name='unam-fciencias')
+
+m = Membership.objects.create(
+    user=user, 
+    profile=user.profile, 
+    circle=circle, 
+    is_admin=True, 
+    remaining_invitations=10
+)
+```
+ver los codigos:
+`Invitation.objects.all().values_list('code')`
+lista circulos:
+`Circle.objects.all()`
+lista invitacion:
+`Invitation.objects.all()`
+<QuerySet [<Invitation: #unam-fciencias: .U.MGVNS2B>, <Invitation: #unam-fciencias: HRX2929JYT>]>
+
+`Membership.objects.all()`
+<QuerySet [<Membership: @infinity at #itesm-csf>, <Membership: @infinity at #itesm-csf>, <Membership: @infinity at #platzi-limitado>, <Membership: @infinity at #platzi-Ruber>]>
+
+`User.objects.all()`
+<QuerySet [<User: ruber>, <User: ruberh>, <User: infinity>]>
+
+`Profile.objects.all()`
+<QuerySet [<Profile: ruberh>, <Profile: infinity>]>
+
+`Token.objects.all()`
+<QuerySet [<Token: 2b9c7bbffb217fd3596c2e0ae2c219034170ed9a>, <Token: 157dd9af7412d3efbe96fd40f452247aea863f1c>, <Token: 96858d772142acf73c145e12900ec2d0431f45b8>]>
 

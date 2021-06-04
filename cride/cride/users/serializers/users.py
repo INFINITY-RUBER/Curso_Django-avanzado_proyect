@@ -4,9 +4,10 @@
 from django.conf import settings
 from django.contrib.auth import password_validation, authenticate
 from django.core.validators import RegexValidator
-from django.core.mail import EmailMultiAlternatives
-from django.template.loader import render_to_string
-from django.utils import timezone
+# movido a celery
+# from django.core.mail import EmailMultiAlternatives
+# from django.template.loader import render_to_string
+# from django.utils import timezone
 
 # Django REST framework
 from rest_framework import serializers
@@ -16,12 +17,15 @@ from rest_framework.validators import UniqueValidator
 # Model
 from cride.users.models import User, Profile
 
+# Tasks
+from cride.taskapp.tasks import send_confirmation_email
+
 #serializers
 from cride.users.serializers.profiles import ProfileModelSerializer
 
 # Utilities
-import jwt
-from datetime import timedelta
+# import jwt
+# from datetime import timedelta
 
 
 class UserModelSerializer(serializers.ModelSerializer):
@@ -83,33 +87,9 @@ class UserSignUpSerializer(serializers.Serializer):
                                         is_verified=False,
                                         is_client=True)
         profile = Profile.objects.create(user=user)
-        self.send_confirmation_email(user)
+        # self.send_confirmation_email(user) < se modifico por el taks con celery>
+        send_confirmation_email.delay(user_pk=user.pk)
         return user
-
-    def send_confirmation_email(self, user):
-        """send confirmation email"""
-        verification_token = self.gen_verification_token(user)
-        subject = 'Bienvenido @{}! verificado your account to start uasing conparta ride'
-        from_email = 'Comparte Ride <noreply@comparteride.com>'
-        content = render_to_string('emails/users/account_verification.html', {
-            'token': verification_token,
-            'user': user
-        })
-        msg = EmailMultiAlternatives(subject, content, from_email,
-                                     [user.email])
-        msg.attach_alternative(content, "text/html")
-        msg.send()
-
-    def gen_verification_token(self, user):
-        """create JWT Token confirmation email"""
-        exp_date = timezone.now() + timedelta(days=3)
-        payload = {
-            'user': user.username,
-            'exp': int(exp_date.timestamp()),
-            'type': 'email_confirmation'
-        }
-        token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
-        return token
 
 
 class UserLoginSerializer(serializers.Serializer):
