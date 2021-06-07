@@ -32,6 +32,8 @@ $ cd cride
 
 ### Crear las migracion
 `docker-compose run --rm django python manage.py migrate`
+### correr pruebas test
+`docker-compose run --rm django pytest`
 
 "import ipdb; ipdb.set_trace()"  <> Ver en la terminal log y gestion
 
