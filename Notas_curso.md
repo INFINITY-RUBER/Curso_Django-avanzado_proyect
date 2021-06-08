@@ -32,7 +32,11 @@ $ cd cride
 
 ### Crear las migracion
 `docker-compose run --rm django python manage.py migrate`
+### Borrar base de datos
+`docker-compose run --rm django python manage.py flush`
+
 ### correr pruebas test
+
 `docker-compose run --rm django pytest`
 
 "import ipdb; ipdb.set_trace()"  <> Ver en la terminal log y gestion
@@ -120,4 +124,38 @@ lista invitacion:
 
 `Token.objects.all()`
 <QuerySet [<Token: 2b9c7bbffb217fd3596c2e0ae2c219034170ed9a>, <Token: 157dd9af7412d3efbe96fd40f452247aea863f1c>, <Token: 96858d772142acf73c145e12900ec2d0431f45b8>]>
+
+
+
+# PRODUCION Docker
+
+permsos al llave aws
+`chmod 0400 CRideProduction.pem`
+`sudo ssh -i CRideProduction.pem ubuntu@<ip>`
+`sudo apt-get update -y`
+`sudo apt-get upgrade -y`
+`sudo apt-get install git`
+
+
+INSTALAR DOCKER:
+
+crear variables entorno .envn
+`ls -al .envs` lista entornos
+`mkdir .envs/.production`
+`touch .envs/.production/.django`
+`touch .envs/.production/.postgres`
+`touch .envs/.production/.caddy`
+pergar variables
+`vim .envs/.production/.postgres`
+`vim .envs/.production/.caddy` se agrega 
+
+configura el bucket:
+AWS_STORAGE_BUCKET_NAME = env('DJANGO_AWS_STORAGE_BUCKET_NAME')
+
+
+construir imagenes
+`sudo docker-compose -f production.yml build`
+`sudo docker-compose -f production.yml up`
+
+
 
