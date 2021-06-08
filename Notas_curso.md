@@ -152,10 +152,13 @@ pergar variables
 configura el bucket:
 AWS_STORAGE_BUCKET_NAME = env('DJANGO_AWS_STORAGE_BUCKET_NAME')
 
+agregar en Namecheap "www"
+
 
 construir imagenes
 `sudo docker-compose -f production.yml build`
 `sudo docker-compose -f production.yml up`
 
-
+probar django:
+`sudo docker-compose -f production.yml run --rm django python manage.py collectstatic`
 
