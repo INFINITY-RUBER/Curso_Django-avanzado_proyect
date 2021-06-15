@@ -1,11 +1,11 @@
-"""User permissions """
+"""Permisos de usuario """
 
 # Django REST framework
 from rest_framework.permissions import BasePermission
 
 
 class IsAccountOwner(BasePermission):
-    """Allow access only to objects owned by the requesting user."""
+    """Permitir el acceso solo a los objetos propiedad del usuario solicitante."""
     def has_object_permission(self, request, view, obj):
-        """Check obj and user are the same."""
+        """Verifique que obj y usuario sean iguales."""
         return request.user == obj

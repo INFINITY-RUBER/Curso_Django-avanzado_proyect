@@ -1,4 +1,4 @@
-"""Circle membership views."""
+"""Vistas de membresía del círculo."""
 
 # Django REST Framework
 from rest_framework import mixins, status, viewsets
@@ -20,7 +20,7 @@ from cride.circles.serializers import MembershipModelSerializer, AddMemberSerial
 class MembershipViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
                         mixins.RetrieveModelMixin, mixins.DestroyModelMixin,
                         viewsets.GenericViewSet):
-    """Circle membership view set."""
+    """Conjunto de vistas de miembros del círculo."""
 
     serializer_class = MembershipModelSerializer
 
@@ -33,7 +33,7 @@ class MembershipViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
                                                        **kwargs)
 
     def get_permissions(self):
-        """Assign permissions based on action."""
+        """Asignar permisos según la acción."""
         permissions = [IsAuthenticated,
                        IsActiveCircleMember]  # por defaul IsAuthenticated
         if self.action != 'create':
@@ -43,36 +43,36 @@ class MembershipViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
         return [p() for p in permissions]
 
     def get_queryset(self):
-        """Return circle members."""
+        """Regresar miembros del círculo."""
         return Membership.objects.filter(
             circle=self.circle,
             is_active=True  # solo los activas se mostraran
         )
 
     def get_object(self):
-        """Return the circle member by using the user's username."""
+        """Devuelve el miembro del círculo usando el nombre de usuario del usuario."""
         return get_object_or_404(Membership,
                                  user__username=self.kwargs['pk'],
                                  circle=self.circle,
                                  is_active=True)
 
     def perform_destroy(self, instance):
-        """Disable membership."""
+        """Deshabilitar la membresía."""
         instance.is_active = False
         instance.save()
 
     @action(detail=True, methods=['get'])
     def invitations(self, request, *args, **kwargs):
-        """Retrieve a member's invitations breakdown.
+        """Recuperar el desglose de las invitaciones de un miembro.
 
-        Will return a list containing all the members that have
-        used its invitations and another list containing the
-        invitations that haven't being used yet.
+        Devolverá una lista que contiene todos los miembros
+         que han utilizado sus invitaciones y otra lista que
+         contiene las invitaciones que aún no se han utilizado.
         """
         member = self.get_object()
-        invited_members = Membership.objects.filter(circle=self.circle,
-                                                    invited_by=request.user,
-                                                    is_active=True)
+        invited_members = Membership.objects.filter(
+            circle=self.circle, invited_by=request.user,
+            is_active=True)  # query a quien invito
 
         unused_invitations = Invitation.objects.filter(
             circle=self.circle, issued_by=request.user,

@@ -1,31 +1,26 @@
-"""Users serializers """
+"""Users serializers."""
 
 # Django
 from django.conf import settings
 from django.contrib.auth import password_validation, authenticate
 from django.core.validators import RegexValidator
-# movido a celery
-# from django.core.mail import EmailMultiAlternatives
-# from django.template.loader import render_to_string
-# from django.utils import timezone
 
-# Django REST framework
+# Django REST Framework
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 from rest_framework.validators import UniqueValidator
 
-# Model
+# Models
 from cride.users.models import User, Profile
 
 # Tasks
 from cride.taskapp.tasks import send_confirmation_email
 
-#serializers
+# Serializers
 from cride.users.serializers.profiles import ProfileModelSerializer
 
 # Utilities
-# import jwt
-# from datetime import timedelta
+import jwt
 
 
 class UserModelSerializer(serializers.ModelSerializer):
@@ -122,7 +117,9 @@ class AccountVerificationSerializer(serializers.Serializer):
     def validate_token(self, data):
         """Verity token validation"""
         try:
-            payload = jwt.decode(data, settings.SECRET_KEY, algorithms="HS256")
+            payload = jwt.decode(data,
+                                 settings.SECRET_KEY,
+                                 algorithms=["HS256"])
         except jwt.ExpiredSignatureError:
             raise serializers.ValidationError(
                 'Verification token link has expired')

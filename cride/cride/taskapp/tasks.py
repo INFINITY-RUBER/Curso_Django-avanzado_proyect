@@ -28,7 +28,7 @@ def gen_verification_token(user):
         'type': 'email_confirmation'
     }
     token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
-    return token.decode()
+    return token
 
 
 @task(name='send_confirmation_email', max_retries=3)
@@ -48,11 +48,11 @@ def send_confirmation_email(user_pk):
     msg.send()
 
 
-@periodic_task(name='disable_finished_rides', run_every=timedelta(minutes=20))
+@periodic_task(name='disable_finished_rides', run_every=timedelta(minutes=40))
 def disable_finished_rides():
     """Disable finished rides."""
     now = timezone.now()
-    offset = now + timedelta(minutes=20)
+    offset = now + timedelta(minutes=40)
 
     # Update rides that have already finished
     rides = Ride.objects.filter(arrival_date__gte=now,

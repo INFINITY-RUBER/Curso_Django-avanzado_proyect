@@ -16,4 +16,5 @@ class ProfileModelSerializer(serializers.ModelSerializer):
         # campos que quiero mostrar
         fields = ('picture', 'biography', 'rides_taken', 'rides_offered',
                   'reputation')
-        read_only_fields = ('rides_taken', 'rides_offered', 'reputation')
+        read_only_fields = ('rides_taken', 'rides_offered', 'reputation'
+                            )  # solo lectura

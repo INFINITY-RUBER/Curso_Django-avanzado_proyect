@@ -32,24 +32,25 @@ class CircleviewsSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
     ordering_fields = ('rides_offered', 'rides_taken', 'name', 'created',
                        'member_limit')
     ordering = ('-member__count', '-rides_offered', '-rides_taken')
+    # DjangoFilterBackend:
     filter_fields = ('verified', 'is_limited')
 
     def get_queryset(self):
-        """ Restrict list to public-only"""
+        """Restringir la lista a solo público"""
         queryset = Circle.objects.all()
         if self.action == 'list':
             return queryset.filter(is_public=True)
         return queryset
 
     def get_permissions(self):
-        """Assign permissions based on action."""
+        """Asignar permisos según la acción."""
         permissions = [IsAuthenticated]
         if self.action in ['update', 'partial_update']:
             permissions.append(IsCircleAdmin)
         return [permission() for permission in permissions]
 
     def perform_create(self, serializer):
-        """Assigh circles admin  """
+        """Administrador de círculos Assigh  """
         circle = serializer.save()
         user = self.request.user
         profile = user.profile

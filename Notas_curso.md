@@ -154,11 +154,37 @@ AWS_STORAGE_BUCKET_NAME = env('DJANGO_AWS_STORAGE_BUCKET_NAME')
 
 agregar en Namecheap "www"
 
-
-construir imagenes
+agregar production.py: 
+ALLOWED_HOSTS = env.list('DJANGO_ALLOWED_HOSTS', default=['lasmesas.club'])
+construir imagenes:
 `sudo docker-compose -f production.yml build`
 `sudo docker-compose -f production.yml up`
 
 probar django:
 `sudo docker-compose -f production.yml run --rm django python manage.py collectstatic`
+crear migraciones:
+`sudo docker-compose -f production.yml run --rm django python manage.py migrate`
+
+crar usuario
+`sudo docker-compose -f production.yml run --rm django python manage.py createsuperuser`
+
+Docker supervisor:
+
+`sudo su`
+`apt-get install supervisor`
+`service supervisor restart `
+`cd /etc/supervisor/conf.d/  `
+`vim cride.conf  `
+```
+[program:cride]
+command=docker-compose -f production.yml up
+directory=/home/ubuntu/Curso_Django-avanzado_proyect/cride
+redirect_stderr=true
+autostart=true
+autorestart=true
+priority=10
+
+```
+
+
 

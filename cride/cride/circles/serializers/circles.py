@@ -26,10 +26,11 @@ class CircleModelSerializer(serializers.ModelSerializer):
                             'rides_taken')
 
     def validate(self, data):
-        """ Esure both members_limit asn is_limited are present."""
+        """ Asegúrese de que tanto members_limit como is_limited estén presentes."""
         members_limit = data.get('members_limit', None)
         is_limited = data.get('is_limited', False)
         if is_limited ^ bool(members_limit):  # operación XOR en los operandos
             raise serializers.ValidationError(
-                'if circle is limited, a member limit must be provided')
+                'si el círculo es limitado, se debe proporcionar un límite de miembros'
+            )
         return data

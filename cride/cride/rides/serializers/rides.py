@@ -43,7 +43,8 @@ class CreateRideSerializer(serializers.ModelSerializer):
     """Create ride serializer."""
 
     offered_by = serializers.HiddenField(
-        default=serializers.CurrentUserDefault())
+        default=serializers.CurrentUserDefault(
+        ))  # nos regresa el usuario que esta siend mandado en el contexto
 
     available_seats = serializers.IntegerField(min_value=1, max_value=15)
 
@@ -54,11 +55,11 @@ class CreateRideSerializer(serializers.ModelSerializer):
         exclude = ('offered_in', 'passengers', 'rating', 'is_active')
 
     def validate_departure_date(self, data):
-        """Verify date is not in the past."""
+        """Verificar que la fecha no sea pasada."""
         min_date = timezone.now() + timedelta(minutes=10)
         if data < min_date:
             raise serializers.ValidationError(
-                'Departure time must be at least pass the next 20 minutes window.'
+                'La hora de salida debe pasar al menos la siguiente ventana de 20 minutos.'
             )
         return data
 
