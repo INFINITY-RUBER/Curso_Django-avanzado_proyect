@@ -78,6 +78,7 @@ registrar usuario:
 `http localhost:8000/users/verify/ token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoiaW5maW5pdHkiLCJleHAiOjE2MjI1NzMyMDMsInR5cGUiOiJlbWFpbF9jb25maXJtYXRpb24ifQ.PkeolGKjc0jsaZxwdTdxdYseB-qgJst2YPZ2UJ0l0mc"`
 
 ## en Shell_plus:
+docker-compose run --rm django python manage.py shell_plus
 `User.objects.all()` ver usuarios
 `User.objects.get(username='infinity')`  un usuario
 
@@ -159,6 +160,8 @@ ALLOWED_HOSTS = env.list('DJANGO_ALLOWED_HOSTS', default=['lasmesas.club'])
 construir imagenes:
 `sudo docker-compose -f production.yml build`
 `sudo docker-compose -f production.yml up`
+`sudo docker-compose -f production.yml down `
+
 
 probar django:
 `sudo docker-compose -f production.yml run --rm django python manage.py collectstatic`
@@ -168,8 +171,9 @@ crear migraciones:
 crar usuario
 `sudo docker-compose -f production.yml run --rm django python manage.py createsuperuser`
 
-Docker supervisor:
+`sudo docker-compose -f production.yml run --rm django python manage.py shell_plus`
 
+Docker supervisor:
 `sudo su`
 `apt-get install supervisor`
 `service supervisor restart `
@@ -183,8 +187,19 @@ redirect_stderr=true
 autostart=true
 autorestart=true
 priority=10
-
 ```
+`supervisorctl reread `
+`supervisorctl update `
+`supervisorctl start cride `
+`supervisorctl status cride `
+`supervisorctl stop cride ` > Stop a process
+
+stop <name>
+
+cride    RUNNING   pid 28776, uptime 0:01:42
+
+
+
 
 
 
