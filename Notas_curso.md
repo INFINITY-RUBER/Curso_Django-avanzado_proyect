@@ -126,7 +126,9 @@ lista invitacion:
 `Token.objects.all()`
 <QuerySet [<Token: 2b9c7bbffb217fd3596c2e0ae2c219034170ed9a>, <Token: 157dd9af7412d3efbe96fd40f452247aea863f1c>, <Token: 96858d772142acf73c145e12900ec2d0431f45b8>]>
 
-
+# db.shell
+http://www.yolinux.com/TUTORIALS/LinuxTutorialPostgreSQL.html
+`docker-compose run --rm django python manage.py dbshell`
 
 # PRODUCION Docker
 
